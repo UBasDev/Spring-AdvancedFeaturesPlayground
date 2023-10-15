@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CustomerController {
     @GetMapping(path = "get-single-customer")
     public String GetSingleCustomer(){
-        return "Hello world test1!";
+        return "Hello world!";
     }
 }
