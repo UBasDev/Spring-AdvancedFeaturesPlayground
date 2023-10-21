@@ -1,10 +1,19 @@
 package org.ucbdev.Presentation.Controller;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.ucbdev.Core.Application.Request.CreateRequest1;
 import org.ucbdev.Core.Application.Request.CreateSingleCustomerRequest;
+import org.ucbdev.Core.Application.Request.UpdateRequest1;
 import org.ucbdev.Core.Application.Response.CreateSingleCustomerResponse;
+import org.ucbdev.Core.Domain.Entities.Customer;
+import org.ucbdev.Core.Domain.Entities.Order;
 
 import java.text.MessageFormat;
 import java.time.*;
@@ -13,19 +22,19 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalField;
 import java.time.temporal.ValueRange;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/customerapi")
 public class CustomerController {
+    @PersistenceContext
+    private final EntityManager entityManager;
     private final RestTemplate restTemplate;
-    @Autowired
-    public CustomerController(RestTemplate restTemplate){
+
+    public CustomerController(RestTemplate restTemplate, EntityManager entityManager){
         this.restTemplate = restTemplate;
+        this.entityManager = entityManager;
     }
     @GetMapping(path = "get-single-customer")
     public String getSingleCustomer(){
@@ -190,5 +199,59 @@ public class CustomerController {
         long x19 = x1.until(LocalTime.now().plusHours(5), ChronoUnit.HOURS);
         LocalTime x20 = x1.truncatedTo(ChronoUnit.HOURS);
 
+    }
+    @GetMapping(path = "test5")
+    public void test5(){
+        var x1 = new Customer();
+
+    }
+    @GetMapping(path = "test6")
+    public Customer test6(@RequestParam("customerId") Integer query1){
+        TypedQuery<Customer> x1 = this.entityManager.createQuery("SELECT C FROM Customer C FULL JOIN C.orders O ON C.customerId=O.customer.customerId WHERE C.customerId=:customerId ORDER BY C.customerId LIMIT 5", Customer.class);
+        x1.setParameter("customerId", query1);
+        List<Customer> x1_1 = x1.getResultList();
+        var x2 = this.entityManager.createQuery("SELECT C FROM Customer C FULL JOIN C.orders O ON C.customerId=O.customer.customerId WHERE C.customerId=:customerId", Customer.class).setParameter("customerId", query1).getSingleResult();
+        var x3 = this.entityManager.find(Customer.class, query1);
+        var x4 = this.entityManager.getReference(Customer.class, query1);
+        return x2;
+    }
+
+    @PostMapping(path = "test7")
+    @Transactional(rollbackOn = {Exception.class}, dontRollbackOn = {})
+    public void test7(@RequestBody CreateRequest1 requestBody){
+        var customerToCreate = Customer.builder().name(requestBody.getCustomerName()).age(requestBody.getCustomerAge()).lastname(requestBody.getCustomerLastname()).build();
+        this.entityManager.persist(customerToCreate);
+        var orderToCreate = Order.builder().customer(customerToCreate).totalPrice(requestBody.getOrderPrice()).build();
+        var addedOrders = customerToCreate.getOrders();
+        if(addedOrders == null) addedOrders = new HashSet<Order>();
+        addedOrders.add(orderToCreate);
+        customerToCreate.setOrders(addedOrders);
+        //this.entityManager.flush();
+    }
+    @PostMapping(path = "test8")
+    @Transactional
+    public void test8(@RequestBody UpdateRequest1 requestBody){
+        var x1 = this.entityManager.find(Customer.class, requestBody.getCustomerId());
+        x1.setName(requestBody.getCustomerName());
+        x1.setAge(requestBody.getCustomerAge());
+        x1.setLastname(requestBody.getCustomerLastname());
+        x1.getOrders().forEach((currentOrder)->{
+            currentOrder.setTotalPrice(requestBody.getOrderPrice());
+        });
+        this.entityManager.refresh(x1);
+        this.entityManager.merge(x1);
+        var x2 = x1;
+        var x3 = this.entityManager.find(Customer.class, requestBody.getCustomerId());
+        var x4 = this.entityManager.getReference(Customer.class, requestBody.getCustomerId());
+    }
+
+    @GetMapping(path = "test9")
+    @Transactional
+    public void test9(@RequestParam("query1") Integer query1){
+        var x1 = this.entityManager.find(Customer.class, query1);
+        this.entityManager.remove(x1);
+        this.entityManager.detach(x1);
+        this.entityManager.clear();
+        boolean x2 = this.entityManager.contains(x1);
     }
 }
