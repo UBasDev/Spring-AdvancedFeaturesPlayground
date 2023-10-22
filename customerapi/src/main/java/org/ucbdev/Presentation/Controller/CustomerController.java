@@ -1,11 +1,7 @@
 package org.ucbdev.Presentation.Controller;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
+import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.ucbdev.Core.Application.Request.CreateRequest1;
@@ -30,11 +26,13 @@ import java.util.*;
 public class CustomerController {
     @PersistenceContext
     private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final RestTemplate restTemplate;
 
-    public CustomerController(RestTemplate restTemplate, EntityManager entityManager){
+    public CustomerController(RestTemplate restTemplate, EntityManager entityManager, EntityManagerFactory entityManagerFactory){
         this.restTemplate = restTemplate;
         this.entityManager = entityManager;
+        this.entityManagerFactory = entityManagerFactory;
     }
     @GetMapping(path = "get-single-customer")
     public String getSingleCustomer(){
@@ -253,5 +251,70 @@ public class CustomerController {
         this.entityManager.detach(x1);
         this.entityManager.clear();
         boolean x2 = this.entityManager.contains(x1);
+    }
+
+    @PostMapping(path = "test10")
+    public void test10(@RequestBody CreateRequest1 requestBody){
+        EntityManager entityManager1 = this.entityManagerFactory.createEntityManager();
+        EntityTransaction newTransaction1 = entityManager1.getTransaction();
+        try{
+            newTransaction1.begin();
+            entityManager1.createQuery("INSERT INTO Customer C (C.name, C.age, C.lastname) VALUES (:customerName, :customerAge, :customerLastname)").setParameter("customerName", requestBody.getCustomerName()).setParameter("customerAge", requestBody.getCustomerAge()).setParameter("customerLastname", requestBody.getCustomerLastname()).executeUpdate();
+            newTransaction1.commit();
+        }catch (Exception ex){
+            System.out.printf("Hata alındı: %s", ex.getMessage());
+            if(newTransaction1.isActive()) newTransaction1.rollback();
+        }finally {
+            entityManager1.close();
+        }
+    }
+
+    @PostMapping(path = "test11")
+    public void test11(@RequestBody UpdateRequest1 requestBody){
+        EntityManager entityManager1 = this.entityManagerFactory.createEntityManager();
+        EntityTransaction newTransaction1 = entityManager1.getTransaction();
+        try{
+            newTransaction1.begin();
+            entityManager1.createQuery("UPDATE Customer C SET C.name=:customerName, C.age=:customerAge, C.lastname=:customerLastname WHERE C.customerId=:customerId").setParameter("customerId", requestBody.getCustomerId()).setParameter("customerName", requestBody.getCustomerName()).setParameter("customerAge", requestBody.getCustomerAge()).setParameter("customerLastname", requestBody.getCustomerLastname()).executeUpdate();
+            newTransaction1.commit();
+        }catch (Exception ex){
+            System.out.printf("Hata alındı: %s", ex.getMessage());
+            if(newTransaction1.isActive()) newTransaction1.rollback();
+        }finally {
+            entityManager1.close();
+        }
+    }
+    @GetMapping(path = "test12")
+    public void test12(@RequestParam("query1") Integer query1){
+        EntityManager entityManager1 = this.entityManagerFactory.createEntityManager();
+        EntityTransaction newTransaction1 = entityManager1.getTransaction();
+        try{
+            newTransaction1.begin();
+            entityManager1.createQuery("DELETE FROM Customer C where C.customerId=:customerId").setParameter("customerId", query1).executeUpdate();
+            newTransaction1.commit();
+        }catch (Exception ex){
+            System.out.printf("Hata alındı: %s", ex.getMessage());
+            if(newTransaction1.isActive()) newTransaction1.rollback();
+        }finally {
+            entityManager1.close();
+        }
+    }
+
+    @GetMapping(path = "test13")
+    public void test13(){
+        EntityManager entityManager1 = this.entityManagerFactory.createEntityManager();
+        EntityTransaction newTransaction1 = entityManager1.getTransaction();
+        try{
+            List<Customer> x1 = entityManager1.createQuery("SELECT C FROM Customer C").getResultList();
+            Object x2 = entityManager1.createQuery("SELECT C FROM Customer C WHERE C.customerId=9").getSingleResult();
+            Object x3 = entityManager1.createQuery("SELECT C FROM Customer C FULL JOIN C.orders O ON C.customerId=O.customer.customerId WHERE C.customerId=:customerId ORDER BY C.customerId").setParameter("customerId", 9).getSingleResult();
+            List<Customer> x4 = entityManager1.createQuery("SELECT C FROM Customer C FULL JOIN C.orders O ON C.customerId=O.customer.customerId ORDER BY C.customerId LIMIT 5").getResultList();
+            var x5 = "";
+        }catch (Exception ex){
+            System.out.printf("Hata alındı: %s", ex.getMessage());
+            if(newTransaction1.isActive()) newTransaction1.rollback();
+        }finally {
+            entityManager1.close();
+        }
     }
 }
