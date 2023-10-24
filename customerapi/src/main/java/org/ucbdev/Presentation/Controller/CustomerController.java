@@ -1,5 +1,8 @@
 package org.ucbdev.Presentation.Controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +31,13 @@ public class CustomerController {
     private final EntityManager entityManager;
     private final EntityManagerFactory entityManagerFactory;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
-    public CustomerController(RestTemplate restTemplate, EntityManager entityManager, EntityManagerFactory entityManagerFactory){
+    public CustomerController(RestTemplate restTemplate, EntityManager entityManager, EntityManagerFactory entityManagerFactory, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.entityManager = entityManager;
         this.entityManagerFactory = entityManagerFactory;
+        this.objectMapper = objectMapper;
     }
     @GetMapping(path = "get-single-customer")
     public String getSingleCustomer(){
@@ -316,5 +321,13 @@ public class CustomerController {
         }finally {
             entityManager1.close();
         }
+    }
+    @GetMapping(path="test14")
+    public void test14() throws Exception{
+        var x1 = CreateSingleCustomerRequest.builder().build();
+        this.objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true);
+        this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        String serializedObject1 = this.objectMapper.writeValueAsString(x1);
+        CreateSingleCustomerRequest x2 = this.objectMapper.readValue(serializedObject1, CreateSingleCustomerRequest.class);
     }
 }
