@@ -42,7 +42,30 @@ public class LoggingFilter1 implements Filter {
         var x6 = httpRequest.getHeader("header1");
         var x7 = httpRequest.getContextPath();
         Cookie[] x8 = httpRequest.getCookies();
+        for(Cookie currentCookie : x8){
 
+        }
+        Stream<Cookie> x9 =Arrays.stream(x8).filter(c -> c.getName().equals("cookie1"));
+        Optional<Cookie> x10 = x9.findFirst();
+        if(x10.isPresent()){
+            var cookie1 = x10.get();
+            var x11 = cookie1.getName();
+            var x12 = cookie1.getValue();
+            var x13 = cookie1.getAttributes();
+            var x14 = cookie1.getDomain();
+            var x15 = cookie1.getMaxAge();
+            var x16 = cookie1.getPath();
+            var x17 = cookie1.getSecure();
+            var x18 = cookie1.isHttpOnly();
+            cookie1.setAttribute("attr1", "value1");
+            cookie1.setDomain("localhost");
+            cookie1.setPath("path1");
+            cookie1.setSecure(true);
+            cookie1.setValue("value1_1");
+            cookie1.setHttpOnly(true);
+            cookie1.setMaxAge(600);
+            httpResponse.addCookie(cookie1);
+        }
 
         /*
         httpResponse.setStatus(HttpStatus.CREATED.value());
