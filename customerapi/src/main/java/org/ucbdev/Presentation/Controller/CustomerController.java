@@ -336,6 +336,14 @@ public class CustomerController {
     }
     @GetMapping(path="test15")
     public ResponseEntity test15(HttpServletResponse response){
-        return ResponseEntity.ok().build();
+        Cookie cookie = new Cookie("cookie1", "value1");
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setDomain("localhost");
+        cookie.setPath("/");
+        cookie.setMaxAge(600); // 600 secondss
+        response.addCookie(cookie);
+        return ResponseEntity.ok().body("OKAY");
     }
+
 }
