@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.persistence.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.ucbdev.Core.Application.Request.CreateRequest1;
@@ -323,11 +326,16 @@ public class CustomerController {
         }
     }
     @GetMapping(path="test14")
-    public void test14() throws Exception{
+    public String test14() throws Exception{
         var x1 = CreateSingleCustomerRequest.builder().build();
-        this.objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true);
-        this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        //this.objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true);
+        //this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         String serializedObject1 = this.objectMapper.writeValueAsString(x1);
         CreateSingleCustomerRequest x2 = this.objectMapper.readValue(serializedObject1, CreateSingleCustomerRequest.class);
+        return serializedObject1;
+    }
+    @GetMapping(path="test15")
+    public ResponseEntity test15(HttpServletResponse response){
+        return ResponseEntity.ok().build();
     }
 }
