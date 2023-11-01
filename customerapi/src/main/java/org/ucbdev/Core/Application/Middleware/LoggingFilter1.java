@@ -42,9 +42,12 @@ public class LoggingFilter1 implements Filter {
         var x6 = httpRequest.getHeader("header1");
         var x7 = httpRequest.getContextPath();
         Cookie[] x8 = httpRequest.getCookies();
+        /*
         for(Cookie currentCookie : x8){
 
         }
+        */
+        /*
         Stream<Cookie> x9 =Arrays.stream(x8).filter(c -> c.getName().equals("cookie1"));
         Optional<Cookie> x10 = x9.findFirst();
         if(x10.isPresent()){
@@ -66,7 +69,7 @@ public class LoggingFilter1 implements Filter {
             cookie1.setMaxAge(600);
             httpResponse.addCookie(cookie1);
         }
-
+        */
         /*
         httpResponse.setStatus(HttpStatus.CREATED.value());
         httpResponse.addHeader("header1", "value1");
