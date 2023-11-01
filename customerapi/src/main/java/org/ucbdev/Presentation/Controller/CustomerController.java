@@ -561,4 +561,8 @@ public class CustomerController {
 
         return ResponseEntity.ok().body("OKAY");
     }
+    @GetMapping(path = "test18")
+    public ResponseEntity tet18(){
+        return ResponseEntity.ok().body("Tet18 works!");
+    }
 }
