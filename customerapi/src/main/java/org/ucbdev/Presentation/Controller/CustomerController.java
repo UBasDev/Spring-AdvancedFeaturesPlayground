@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.ucbdev.Core.Application.Exception.CustomException1;
 import org.ucbdev.Core.Application.Request.CreateRequest1;
 import org.ucbdev.Core.Application.Request.CreateSingleCustomerRequest;
 import org.ucbdev.Core.Application.Request.TestRequest1;
@@ -568,6 +569,7 @@ public class CustomerController {
     }
     @GetMapping(path = "test18")
     public ResponseEntity tet18(){
+        if(true) throw new CustomException1("test error1", HttpStatus.EXPECTATION_FAILED);
         return ResponseEntity.ok().body("Tet18 works!");
     }
 }
