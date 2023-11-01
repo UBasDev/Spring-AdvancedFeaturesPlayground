@@ -292,6 +292,11 @@ public class CustomerController {
             entityManager1.close();
         }
     }
+    @PostMapping(path = "test10_1")
+    @Transactional
+    public void test10_1(@RequestBody CreateRequest1 requestBody){
+        this.entityManager.persist(Customer.builder().name(requestBody.getCustomerName()).lastname(requestBody.getCustomerLastname()).age(requestBody.getCustomerAge()).build());
+    }
 
     @PostMapping(path = "test11")
     public void test11(@RequestBody UpdateRequest1 requestBody){

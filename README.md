@@ -8,3 +8,4 @@
 -TransactionManagement with JPA</br>
 -Ordered Custom Filters[Middlewares]</br>
 -Custom Interceptors</br>
+-Custom Hibernate Interceptors</br>
