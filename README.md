@@ -4,5 +4,7 @@
 -Zipkin</br>
 -Microservices</br>
 -APIGateway</br>
--TransactionManagement</br>
+-LoadBalancer for internal communication between APIs</br>
+-TransactionManagement with JPA</br>
 -Ordered Custom Filters[Middlewares]</br>
+-Custom Interceptors</br>
