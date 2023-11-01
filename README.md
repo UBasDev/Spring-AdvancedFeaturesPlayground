@@ -9,3 +9,5 @@
 -Ordered Custom Filters[Middlewares]</br>
 -Custom Interceptors</br>
 -Custom Hibernate Interceptors</br>
+-Custom Exception</br>
+-Custom Exception Handler</br>
