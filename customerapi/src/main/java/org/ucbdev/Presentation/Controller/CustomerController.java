@@ -4,19 +4,31 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.persistence.*;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.ServletConnection;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.ucbdev.Core.Application.Request.CreateRequest1;
 import org.ucbdev.Core.Application.Request.CreateSingleCustomerRequest;
+import org.ucbdev.Core.Application.Request.TestRequest1;
 import org.ucbdev.Core.Application.Request.UpdateRequest1;
 import org.ucbdev.Core.Application.Response.CreateSingleCustomerResponse;
 import org.ucbdev.Core.Domain.Entities.Customer;
 import org.ucbdev.Core.Domain.Entities.Order;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.time.*;
 import java.time.chrono.IsoEra;
@@ -35,12 +47,14 @@ public class CustomerController {
     private final EntityManagerFactory entityManagerFactory;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final ServletContext servletContext;
 
-    public CustomerController(RestTemplate restTemplate, EntityManager entityManager, EntityManagerFactory entityManagerFactory, ObjectMapper objectMapper) {
+    public CustomerController(RestTemplate restTemplate, EntityManager entityManager, EntityManagerFactory entityManagerFactory, ObjectMapper objectMapper, ServletContext servletContext) {
         this.restTemplate = restTemplate;
         this.entityManager = entityManager;
         this.entityManagerFactory = entityManagerFactory;
         this.objectMapper = objectMapper;
+        this.servletContext = servletContext;
     }
     @GetMapping(path = "get-single-customer")
     public String getSingleCustomer(){
@@ -346,4 +360,148 @@ public class CustomerController {
         return ResponseEntity.ok().body("OKAY");
     }
 
+
+    @PostMapping(path = "test16")
+    public ResponseEntity test16 (HttpServletResponse response1, HttpServletRequest request1)throws Exception{
+        var x9 = request1.authenticate(response1);
+        var x8 = request1.changeSessionId();
+        var x1 = request1.getContextPath();
+        var x2 = request1.getAuthType();
+        Enumeration<String> x3 = request1.getHeaderNames();
+        while(x3.hasMoreElements()){
+            System.out.println(x3.nextElement());
+        }
+        //AsyncContext x26 = request1.getAsyncContext();
+        var x27 = request1.getAttribute("attr1");
+        Enumeration<String> x28 = request1.getAttributeNames();
+        while(x28.hasMoreElements()){
+            System.out.println(x28.nextElement());
+        }
+        var x29 = request1.getCharacterEncoding();
+        var x30 = request1.getContentLength();
+        var x31 = request1.getContentLengthLong();
+        var x32 = request1.getContentType();
+        var x33 = request1.getDispatcherType();
+        HttpServletMapping x10 = request1.getHttpServletMapping();
+        //var st1 = request1.getInputStream();
+        /*
+        byte[] buffer = new byte[512];
+        StringBuilder sb = new StringBuilder();
+        while (st1.read(buffer) != -1) {
+            sb.append(new String(buffer));
+        }
+        System.out.println(sb.toString());
+        */
+
+        /*
+        byte[] bytes = st1.readAllBytes();
+        System.out.println(new String(bytes, StandardCharsets.UTF_8));
+        */
+        /*
+        BufferedReader reader = new BufferedReader(new InputStreamReader(st1));
+        String line;
+        StringBuilder requestBody = new StringBuilder();
+
+        while ((line = reader.readLine()) != null) {
+            requestBody.append(line);
+        }
+
+        System.out.println(requestBody.toString());
+        st1.close();
+        reader.close();
+        */
+
+        var x35 = request1.getLocalAddr();
+        var x36 = request1.getLocale();
+        Enumeration<Locale> x37 = request1.getLocales();
+        while(x37.hasMoreElements()){
+            Locale current1 = x37.nextElement();
+        }
+        var x38 = request1.getLocalName();
+        var x39 = request1.getLocalPort();
+
+
+        var x4 = request1.getPathInfo();
+        var x5 = request1.getQueryString();
+        var x6 = request1.getRequestedSessionId();
+
+        /*
+        Collection<Part> x11 = request1.getParts();
+        for (var currentPart1:x11) {
+            var n2 = currentPart1.getContentType();
+            var n1 = currentPart1.getName();
+            var n3 = currentPart1.getHeaderNames();
+            for(var y1: n3){
+                System.out.println(y1.toString());
+            }
+            var n6 = currentPart1.getHeader("header1");
+            var n7 = currentPart1.getHeaders("header1");
+            var n4 = currentPart1.getSize();
+            var n5 = currentPart1.getSubmittedFileName();
+
+            if(n1.equals("file1")){
+                var p1 = System.getProperty("user.dir");
+                var p2 = Paths.get("");
+                var p3 = new File("").getAbsoluteFile();
+                var stream1 = currentPart1.getInputStream();
+                byte[] fileBytes1 = stream1.readAllBytes();
+                Path filePath1 = Paths.get(p1 + "/" + currentPart1.getName() + ".jpg");
+                Files.write(filePath1, fileBytes1);
+            }
+
+            currentPart1.write("");
+
+            currentPart1.delete();
+        }
+        */
+        var x12 = request1.getPathTranslated();
+        var x13 = request1.getRemoteUser();
+        var x14 = request1.getRequestURL();
+        var x15 = request1.getServletPath();
+        var x16 = request1.getTrailerFields();
+        var x17 = request1.getUserPrincipal();
+        //x17.getName();
+        ServletContext x25 = request1.getServletContext();
+        var x40 = request1.getParameterMap();
+
+        Enumeration<String> x41 = request1.getParameterNames();
+        while(x41.hasMoreElements()){
+            System.out.println(x41.nextElement());
+        }
+        var x42 = request1.getParameterValues("query1");
+        var x43 = request1.getProtocol();
+        var x44 = request1.getProtocolRequestId();
+        //var x45 = request1.getReader();
+        var x46 = request1.getRemoteAddr();
+        var x47 = request1.getRemoteHost();
+        var x48 = request1.getRemotePort();
+        var x49 = request1.getRequestId();
+        var x50 = request1.getScheme();
+        var x51 = request1.getServerName();
+        var x52 = request1.getServerPort();
+        ServletConnection x53 = request1.getServletConnection();
+        var x53_1 = x53.getProtocol();
+        var x53_2 = x53.getConnectionId();
+        var x53_3 = x53.isSecure();
+        var x53_4 = x53.getProtocolConnectionId();
+        var x7 = request1.isUserInRole("role1");
+        var x18 = request1.isRequestedSessionIdFromCookie();
+
+
+        var x19 = request1.isRequestedSessionIdFromURL();
+        var x20 = request1.isRequestedSessionIdValid();
+        var x21 = request1.isTrailerFieldsReady();
+        //request1.login("username1", "password1");
+        request1.logout();
+        //request1.newPushBuilder().path("resources/logo1.jpeg").addHeader("Content-Type", "image/jpeg").push(); //HTTP2 server push requestleri göndermemizi sağlar. Böylece clientın mevcut sayfasındaki spesific resourceların clientın cacheine requestten önce gönderilmesini ve bu resourceların yüklenme hızının artırılmasını sağlarız.
+        //request1.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        request1.setAttribute("attr1", "value1");
+        request1.removeAttribute("attr2");
+        var x22 = request1.isSecure();
+        var x23 = request1.isAsyncSupported();
+        var x24 = request1.isAsyncStarted();
+
+        request1.startAsync(request1, response1);
+        return ResponseEntity.ok().body("OKAY");
+    }
 }
