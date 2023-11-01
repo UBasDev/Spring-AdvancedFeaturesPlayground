@@ -10,6 +10,8 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.*;
 import jakarta.transaction.Transactional;
+import org.apache.http.entity.ContentType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -502,6 +504,61 @@ public class CustomerController {
         var x24 = request1.isAsyncStarted();
 
         request1.startAsync(request1, response1);
+        return ResponseEntity.ok().body("OKAY");
+    }
+    @GetMapping(path = "test17")
+    public ResponseEntity test17(HttpServletResponse response1){
+        Cookie cookie1 = new Cookie("cookie1", "value1");
+        cookie1.setDomain("localhost");
+        cookie1.setMaxAge(600); // 600 secondss
+        response1.addCookie(cookie1);
+
+        response1.addDateHeader("header1", 11);
+        response1.addHeader("header2", "headerValue2");
+        response1.addIntHeader("header3", 12);
+        boolean x1 = response1.containsHeader("header1");
+        String x2 = response1.encodeRedirectURL("test1");
+        String x3 = response1.encodeURL("test2");
+        String x4 = response1.getHeader("header1");
+        Collection<String> x5 = response1.getHeaderNames();
+        x5.forEach(System.out::println);
+        Collection<String> x6 = response1.getHeaders("header1");
+        x6.forEach(System.out::println);
+        int x7 = response1.getStatus();
+        /*
+        Supplier<Map<String, String>> x8 = response1.getTrailerFields();
+        x8.get().forEach((key, value) -> {
+            System.out.printf("KEY: %s", key);
+            System.out.printf("VALUE: %s", value);
+        });
+        */
+        response1.getTrailerFields();
+        //response1.sendError(400, "error1");
+        //response1.sendRedirect("redirect1");
+        response1.setDateHeader("date1", 13);
+        response1.setHeader("header4", "headerValue4");
+        response1.setIntHeader("header5", 14);
+        response1.setStatus(HttpStatus.OK.value());
+        //response1.setTrailerFields(); //???
+        //response1.flushBuffer();
+        var x8 = response1.getBufferSize();
+        var x9 = response1.getCharacterEncoding();
+        var x10 = response1.getContentType();
+        var x11 = response1.getLocale();
+        //ServletOutputStream x12 = response1.getOutputStream();
+        //PrintWriter x13 =  response1.getWriter();
+        //x13.append("");
+        //x13.write("sa");
+        var x14 = response1.isCommitted();
+        response1.reset();
+        response1.resetBuffer();
+        response1.setBufferSize(500);
+        response1.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response1.setContentLength(300);
+        response1.setContentLengthLong(500);
+        response1.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        response1.setLocale(Locale.ENGLISH);
+
         return ResponseEntity.ok().body("OKAY");
     }
 }
