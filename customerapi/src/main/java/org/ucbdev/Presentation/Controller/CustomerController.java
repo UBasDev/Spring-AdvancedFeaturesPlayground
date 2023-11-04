@@ -572,4 +572,45 @@ public class CustomerController {
         if(true) throw new CustomException1("test error1", HttpStatus.EXPECTATION_FAILED);
         return ResponseEntity.ok().body("Tet18 works!");
     }
+    @GetMapping(path = "test19")
+    public ResponseEntity<String> test19(){
+        var sb1 = new StringBuilder();
+        var sb2 = new StringBuilder();
+        var x1 = sb1.append("text1", 2, 3);
+        var x1_1 = sb1.appendCodePoint(30);
+        sb1.append(" ");
+        int x2 = sb1.compareTo(sb2);
+        sb1.append("test2");
+        var x3 = sb1.delete(3, 5);
+        var x4 = sb1.deleteCharAt(2);
+        int x5 = sb1.indexOf("te", 1);
+        var x6 = sb1.insert(2, "text3");
+        int x7 = sb1.lastIndexOf("te", 2);
+        var x8 = sb1.repeat("cs", 4);
+        var x9 = sb1.replace(2, 5, "newText2");
+        var x10 = sb1.reverse();
+        String x11 = sb1.toString();
+        int x12 = sb1.capacity();
+        char x13 = sb1.charAt(4);
+        int x14 = sb1.codePointAt(4);
+        int x15 = sb1.codePointBefore(5);
+        int x16 = sb1.codePointCount(4, 8);
+        sb1.codePoints().forEach(System.out::println);
+        sb1.chars().forEach(System.out::println);
+        sb1.ensureCapacity(20);
+        var arr1 = new char[]{'a', 'b', 'c', 'd', 'e'};
+        sb1.getChars(3, 5, arr1, 1);
+        boolean x17 = sb1.isEmpty();
+        int x18 = sb1.length();
+        int x19 = sb1.offsetByCodePoints(4, 2);
+        sb1.setCharAt(2, 'a');
+        sb1.setLength(7);
+        CharSequence x20 = sb1.subSequence(3, 6);
+        String x21 = sb1.substring(3, 6);
+
+        sb1.trimToSize();
+        boolean x22 = sb1.equals(sb2);
+
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body(sb1.toString());
+    }
 }
