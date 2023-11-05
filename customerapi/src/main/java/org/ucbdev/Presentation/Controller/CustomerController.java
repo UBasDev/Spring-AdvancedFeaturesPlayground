@@ -10,6 +10,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.*;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.*;
 import java.text.MessageFormat;
 import java.time.*;
 import java.time.chrono.IsoEra;
@@ -44,6 +46,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/customerapi")
+@Slf4j
 public class CustomerController {
     @PersistenceContext
     private final EntityManager entityManager;
@@ -612,5 +615,178 @@ public class CustomerController {
         boolean x22 = sb1.equals(sb2);
 
         return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body(sb1.toString());
+    }
+    @GetMapping(path = "test20")
+    public ResponseEntity test20() throws SQLException {
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String QUERY1 = "select * from customers";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        final Statement st1 = conn1.createStatement();
+        final ResultSet rs1 = st1.executeQuery(QUERY1);
+        try{
+                st1.setQueryTimeout(500);
+                while(rs1.next()){
+                    System.out.printf("ID: %s - NAME: %s - LASTNAME: %s - AGE: %s \n", rs1.getInt("customer_id"), (rs1.getString("name")==null || rs1.getString("name").isEmpty() ? "YOKTUR" : rs1.getString("name")), rs1.getString("lastname"), rs1.getInt("age"));
+                }
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            rs1.close();
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test20 works!");
+    }
+
+    @GetMapping(path="test21")
+    public ResponseEntity test21() throws SQLException {
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String COMMAND1 = "update customers set name='customer1_4', lastname='customerlast1_4' where customer_id=9";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        conn1.setAutoCommit(false);
+        final Statement st1 = conn1.createStatement();
+        try{
+            st1.setQueryTimeout(500);
+            var updatedRows = st1.executeUpdate(COMMAND1);
+            conn1.commit();
+            log.info("UPDATED ROW COUNT: {}", updatedRows);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test21 works!");
+    }
+    @GetMapping(path="test22")
+    public ResponseEntity test22() throws SQLException {
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String COMMAND1 = "update customers set name='customer1_5', lastname='customerlast1_5' where customer_id=9";
+        final String COMMAND2 = "update customers set name='customer2_5', lastname='customerlast2_5' where customer_id=10";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        conn1.setAutoCommit (false);
+        final Statement st1 = conn1.createStatement();
+        try{
+            st1.setQueryTimeout(500);
+            st1.addBatch(COMMAND1);
+            st1.addBatch(COMMAND2);
+            var updatedRows = st1.executeBatch();
+            conn1.commit();
+            log.info("UPDATED ROW COUNT: {}", updatedRows);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test22 works!");
+    }
+
+    @GetMapping(path = "test23")
+    public ResponseEntity test23() throws SQLException{
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String COMMAND1 = "delete from customers where customer_id=21";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        conn1.setAutoCommit (false);
+        final Statement st1 = conn1.createStatement();
+        try{
+            st1.setQueryTimeout(500);
+            var updatedRows = st1.executeUpdate(COMMAND1);
+            conn1.commit();
+            log.info("DELETED ROW COUNT: {}", updatedRows);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test23 works!");
+    }
+    @GetMapping(path = "test24")
+    public ResponseEntity test24() throws SQLException{
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String COMMAND1 = "delete from customers where customer_id=20";
+        final String COMMAND2 = "delete from customers where customer_id=19";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        conn1.setAutoCommit (false);
+        final Statement st1 = conn1.createStatement();
+        try{
+            st1.setQueryTimeout(500);
+            st1.addBatch(COMMAND1);
+            st1.addBatch(COMMAND2);
+            var updatedRows = st1.executeBatch();
+            conn1.commit();
+            log.info("DELETED ROW COUNT: {}", updatedRows);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test24 works!");
+    }
+    @GetMapping(path = "test25")
+    public ResponseEntity test25() throws SQLException{
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String COMMAND1 = "insert into customers (name, lastname, age) values ('customer11', 'customerlast11', 11)";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        conn1.setAutoCommit (false);
+        final Statement st1 = conn1.createStatement();
+        try{
+            st1.setQueryTimeout(500);
+            var updatedRows = st1.executeUpdate(COMMAND1);
+            conn1.commit();
+            log.info("INSERTED ROW COUNT: {}", updatedRows);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test25 works!");
+    }
+    @GetMapping(path = "test26")
+    public ResponseEntity test26() throws SQLException{
+        final String DB_URL1 = "jdbc:postgresql://localhost:5432/customer";
+        final String USER1 = "postgres";
+        final String PASS1 = "admin";
+        final String COMMAND1 = "insert into customers (name, lastname, age) values ('customer12', 'customerlast12', 12)";
+        final String COMMAND2 = "insert into customers (name, lastname, age) values ('customer13', 'customerlast13', 13)";
+        final Connection conn1 = DriverManager.getConnection(DB_URL1, USER1, PASS1);
+        conn1.setAutoCommit (false);
+        final Statement st1 = conn1.createStatement();
+        try{
+            st1.setQueryTimeout(500);
+            st1.addBatch(COMMAND1);
+            st1.addBatch(COMMAND2);
+            var updatedRows = st1.executeBatch();
+            conn1.commit();
+            log.info("INSERTED ROW COUNT: {}", updatedRows);
+        }catch (SQLException ex){
+            log.error(ex.getMessage());
+            conn1.rollback();
+        }finally {
+            st1.close();
+            conn1.close();
+        }
+        return ResponseEntity.status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED).body("Test26 works!");
     }
 }
